@@ -8,22 +8,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.inacif.rekognition.web.app.entity.CaseInfo;
+import com.inacif.rekognition.web.app.entity.Functionality;
 import com.inacif.rekognition.web.app.entity.Request;
 import com.inacif.rekognition.web.app.entity.RequestStatus;
 import com.inacif.rekognition.web.app.entity.Role;
+import com.inacif.rekognition.web.app.entity.RoleFunctionality;
 import com.inacif.rekognition.web.app.entity.SPMenu;
 import com.inacif.rekognition.web.app.entity.Settings;
 import com.inacif.rekognition.web.app.entity.Status;
+import com.inacif.rekognition.web.app.entity.User;
 import com.inacif.rekognition.web.app.projection.RequestApplicantDetail;
 import com.inacif.rekognition.web.app.projection.RequestCitizenDetail;
 import com.inacif.rekognition.web.app.projection.Requests;
+import com.inacif.rekognition.web.app.projection.RolesFunctionalities;
 import com.inacif.rekognition.web.app.repository.CaseRepository;
+import com.inacif.rekognition.web.app.repository.FunctionalityRepository;
 import com.inacif.rekognition.web.app.repository.MenuRepository;
 import com.inacif.rekognition.web.app.repository.RequestRepository;
 import com.inacif.rekognition.web.app.repository.RequestStatusRepository;
+import com.inacif.rekognition.web.app.repository.RoleFunctionalityRepository;
 import com.inacif.rekognition.web.app.repository.RoleRepository;
 import com.inacif.rekognition.web.app.repository.SettingsRepository;
 import com.inacif.rekognition.web.app.repository.StatusRepository;
+import com.inacif.rekognition.web.app.repository.UserRepository;
 
 @Service
 public class QueryServiceImpl implements QueryService {
@@ -37,6 +44,9 @@ public class QueryServiceImpl implements QueryService {
 	private final StatusRepository statusRepository;
 	private final RoleRepository roleRepository;
 	private final MenuRepository menuRepository;
+	private final FunctionalityRepository functionalityRepository;
+	private final RoleFunctionalityRepository roleFunctionalityRepository;
+	private final UserRepository userRepository;
 
 	@Autowired
 	public QueryServiceImpl(
@@ -46,7 +56,10 @@ public class QueryServiceImpl implements QueryService {
 			SettingsRepository settingsRepository,
 			StatusRepository statusRepository,
 			RoleRepository roleRepository,
-			MenuRepository menuRepository) {
+			MenuRepository menuRepository,
+			FunctionalityRepository functionalityRepository,
+			RoleFunctionalityRepository roleFunctionalityRepository,
+			UserRepository userRepository) {
 		
 		this.caseRepository = caseRepository;
 		this.requestStatusRepository = requestStatusRepository;
@@ -55,6 +68,9 @@ public class QueryServiceImpl implements QueryService {
 		this.statusRepository = statusRepository;
 		this.roleRepository = roleRepository;
 		this.menuRepository = menuRepository;
+		this.functionalityRepository = functionalityRepository;
+		this.roleFunctionalityRepository = roleFunctionalityRepository;
+		this.userRepository = userRepository;
 	}
 	
 	@Override
@@ -146,9 +162,48 @@ public class QueryServiceImpl implements QueryService {
 
 	@Override
 	@Transactional
-	public List<SPMenu> callSp_getMenuByRole(String param) {
+	public List<SPMenu> callSp_getMenuByRole(Integer param) {
 		return menuRepository.callMenuProcedure(param);
 	}
+
+	@Override
+	public List<Functionality> getAllFunctionalities() {
+		return this.functionalityRepository.findAll();
+	}
+
+	@Override
+	public List<RoleFunctionality> getRoleFunctionalityByRoleId(Long id) {
+		return this.roleFunctionalityRepository.findByidRoleId(id);
+	}
+
+	@Override
+	public List<RolesFunctionalities> getFunctionalitiesByRoleId(Long id) {
+		return this.functionalityRepository.findByidRoleId(id);
+	}
 	
+	@Override
+	public RoleFunctionality saveRoleFunctionality(RoleFunctionality functionality) {
+		return this.roleFunctionalityRepository.save(functionality);
+	}
+	
+	@Override
+	public User saveUser(User user) {
+		return userRepository.save(user);
+	}
+	
+	@Override
+	public List<User> getAllUsers() {
+		return userRepository.findAll();
+	}
+	
+	@Override
+	public Optional<User> getUserById(Long id) {
+		return userRepository.findById(id);
+	}
+
+	@Override
+	public List<User> getUserByUsernameAndPassword(String username, String password) {
+		return this.userRepository.findByUsernameAndPassword(username, password);
+	}
 	
 }

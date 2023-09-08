@@ -1,5 +1,6 @@
 package com.inacif.rekognition.web.app.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inacif.rekognition.web.app.entity.Role;
+import com.inacif.rekognition.web.app.entity.RoleFunctionality;
+import com.inacif.rekognition.web.app.entity.RoleFunctionalityId;
+import com.inacif.rekognition.web.app.maps.RoleCreate;
+import com.inacif.rekognition.web.app.projection.RolesFunctionalities;
+import com.inacif.rekognition.web.app.responses.FunctionalityRoleResultResponse;
 import com.inacif.rekognition.web.app.responses.Response;
 import com.inacif.rekognition.web.app.service.MenuService;
 import com.inacif.rekognition.web.app.service.QueryService;
@@ -44,17 +50,38 @@ public class RoleController {
 		}
 		
 		List<Role> roles = queryService.getAllRoles();
-		
 		if(roles.isEmpty()) {
 			return new Response(HttpStatus.NOT_FOUND, "No existen roles").message();
 		}
 		
-		return new Response(HttpStatus.OK, "Rol Encontrado", roles).message();
+		List<FunctionalityRoleResultResponse> requestResponse = new ArrayList<>();
+		for(Role role: roles) {
+			List<RolesFunctionalities> functionalities = queryService.getFunctionalitiesByRoleId(role.getId());
+			requestResponse.add(new FunctionalityRoleResultResponse(role, functionalities));
+		}
+		
+		return new Response(HttpStatus.OK, "Rol Encontrado", requestResponse).message();
 	}
 	
 	@PostMapping
-	public ResponseEntity<?> createRole(@RequestBody Role roleEntity){
-		Role role = queryService.saveRole(roleEntity);
+	public ResponseEntity<?> createRole(@RequestBody RoleCreate roleCreate){
+		Role role = new Role();
+		role.setDescription(roleCreate.getDescription());
+		role.setName(roleCreate.getName());
+		role.setStatus(queryService.getStatusByName("Activo").get());
+		role.setUserModifies(roleCreate.getUserModifies());
+		Role roleCreated = queryService.saveRole(role);
+		
+		for(Integer id: roleCreate.getFunctionalities()) {
+			RoleFunctionality roleFunctionality = new RoleFunctionality();
+			roleFunctionality.id = new RoleFunctionalityId();
+			roleFunctionality.getId().setRolId(roleCreated.getId());
+			roleFunctionality.getId().setFunctionalityId(id.longValue());
+			roleFunctionality.setUserModifies(roleCreate.getUserModifies());
+			queryService.saveRoleFunctionality(roleFunctionality);
+		}
+		
+		
 		return new Response(HttpStatus.OK, "Rol creado con éxito", role).message();
 	}
 	
@@ -65,7 +92,7 @@ public class RoleController {
 	}
 	
 	@GetMapping("/menu")
-	public ResponseEntity<?> getRoleMenu(@RequestParam(value="roleId") String roleId){
+	public ResponseEntity<?> getRoleMenu(@RequestParam(value="roleId") Integer roleId){
 		Object menu = menuService.MapMenu(roleId);
 		if(menu == null ) {
 			return new Response(HttpStatus.NOT_FOUND, "No se pudo encontrar el rol").message();

@@ -1,24 +1,30 @@
 package com.inacif.rekognition.web.app.entity;
 
-import java.io.Serializable;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.Data;
 
-@Data
 @Embeddable
-public class RoleFunctionalityId implements Serializable {
+public class RoleFunctionalityId {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	@Column(name = "rol_id")
-    private Long rolId;
+	@Column(name = "role_id")
+    private Long roleId;
 
     @Column(name = "functionality_id")
     private Long functionalityId;
 
+	public Long getRolId() {
+		return roleId;
+	}
+
+	public void setRolId(Long rolId) {
+		this.roleId = rolId;
+	}
+
+	public Long getFunctionalityId() {
+		return functionalityId;
+	}
+
+	public void setFunctionalityId(Long functionalityId) {
+		this.functionalityId = functionalityId;
+	}  
 }

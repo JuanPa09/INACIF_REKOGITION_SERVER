@@ -38,7 +38,7 @@ public class Role {
     private String creationDate;
     
     @Temporal(TemporalType.TIMESTAMP)
-    private Integer modificationDate;
+    private String modificationDate;
 
 	public Long getId() {
 		return id;
@@ -88,11 +88,11 @@ public class Role {
 		this.creationDate = creationDate;
 	}
 
-	public Integer getModificationDate() {
+	public String getModificationDate() {
 		return modificationDate;
 	}
 
-	public void setModificationDate(Integer modificationDate) {
+	public void setModificationDate(String modificationDate) {
 		this.modificationDate = modificationDate;
 	}
     

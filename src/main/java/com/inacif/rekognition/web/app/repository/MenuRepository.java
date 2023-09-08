@@ -11,6 +11,6 @@ import com.inacif.rekognition.web.app.entity.SPMenu;
 public interface MenuRepository extends JpaRepository<SPMenu, Long> {
 
 	@Procedure("spMenuByRole")
-	List<SPMenu> callMenuProcedure(@Param("in_roles_array") String roles);
+	List<SPMenu> callMenuProcedure(@Param("in_roles_array") Integer roles);
 	
 }

@@ -4,15 +4,19 @@ import java.util.List;
 import java.util.Optional;
 
 import com.inacif.rekognition.web.app.entity.CaseInfo;
+import com.inacif.rekognition.web.app.entity.Functionality;
 import com.inacif.rekognition.web.app.entity.Request;
 import com.inacif.rekognition.web.app.entity.RequestStatus;
 import com.inacif.rekognition.web.app.entity.Role;
+import com.inacif.rekognition.web.app.entity.RoleFunctionality;
 import com.inacif.rekognition.web.app.entity.SPMenu;
 import com.inacif.rekognition.web.app.entity.Settings;
 import com.inacif.rekognition.web.app.entity.Status;
+import com.inacif.rekognition.web.app.entity.User;
 import com.inacif.rekognition.web.app.projection.RequestApplicantDetail;
 import com.inacif.rekognition.web.app.projection.RequestCitizenDetail;
 import com.inacif.rekognition.web.app.projection.Requests;
+import com.inacif.rekognition.web.app.projection.RolesFunctionalities;
 
 
 public interface QueryService {
@@ -53,7 +57,25 @@ public interface QueryService {
 	public Optional<Role> getRoleById(Long id);
 	
 	// MENU
-	public List<SPMenu> callSp_getMenuByRole(String param);
+	public List<SPMenu> callSp_getMenuByRole(Integer param);
+	
+	// FUNCTIONALITY
+	RoleFunctionality saveRoleFunctionality(RoleFunctionality functionality);
+	
+	public List<Functionality> getAllFunctionalities();
+	
+	public List<RoleFunctionality> getRoleFunctionalityByRoleId(Long id);
+	
+	public List<RolesFunctionalities> getFunctionalitiesByRoleId(Long id);
+	
+	// USER
+	public User saveUser(User user);
+	
+	public List<User> getAllUsers();
+	
+	public Optional<User> getUserById(Long id);
+	
+	public List<User> getUserByUsernameAndPassword(String username, String password);
 	
 	
 }
