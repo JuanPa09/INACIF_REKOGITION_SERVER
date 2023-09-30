@@ -30,6 +30,7 @@ public class UserController {
 	
 	@GetMapping
 	public ResponseEntity<?> getAllUsers(@RequestParam(value="userId", required = false) Long userId){
+		
 		if(userId != null) {
 			Optional<User> user = queryService.getUserById(userId);
 			if(user.isEmpty()) {

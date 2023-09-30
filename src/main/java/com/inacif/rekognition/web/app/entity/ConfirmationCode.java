@@ -19,14 +19,53 @@ public class ConfirmationCode {
     private Long id;
 
     private String code;
-    private Long expirationTimestamp;
+    private String expirationTimestamp;
     private String channel;
     
     @ManyToOne
     @JoinColumn(name = "request_id")
     private Request request;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getExpirationTimestamp() {
+		return expirationTimestamp;
+	}
+
+	public void setExpirationTimestamp(String expirationTimestamp) {
+		this.expirationTimestamp = expirationTimestamp;
+	}
+
+	public String getChannel() {
+		return channel;
+	}
+
+	public void setChannel(String channel) {
+		this.channel = channel;
+	}
+
+	public Request getRequest() {
+		return request;
+	}
+
+	public void setRequest(Request request) {
+		this.request = request;
+	}
     
-    // Getters y setters
 }
 
 

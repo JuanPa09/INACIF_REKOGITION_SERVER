@@ -8,10 +8,18 @@ import java.time.format.DateTimeFormatter;
 
 public class Utils {
 
+	public static String getExpirationTimeZone(int expirationDays) {
+		ZoneId zoneId = ZoneId.of(Constants.timeZone);
+        ZonedDateTime zonedDateTime = ZonedDateTime.now(zoneId);
+        zonedDateTime = zonedDateTime.plusDays(expirationDays);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return zonedDateTime.format(formatter);
+	}
 	
 	public static String getTimeZone() {
         ZoneId zoneId = ZoneId.of(Constants.timeZone);
         ZonedDateTime zonedDateTime = ZonedDateTime.now(zoneId);
+        zonedDateTime.plusDays(0);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return zonedDateTime.format(formatter);
 	}

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.inacif.rekognition.web.app.Utils;
+import com.inacif.rekognition.web.app.entity.ConfirmationCode;
 import com.inacif.rekognition.web.app.entity.Request;
 import com.inacif.rekognition.web.app.entity.RequestStatus;
 import com.inacif.rekognition.web.app.maps.RequestDetail;
@@ -79,6 +80,18 @@ public class RequestServiceImpl implements RequestService {
 		return request;
 	}
 
+	public Long emailConfirmation(String code) {
+		Optional<ConfirmationCode> confirmationCode = queryService.getConfirmationCodeByCode(code);
+		if(confirmationCode.isEmpty()) {
+			return null;
+		}
+		Request request = confirmationCode.get().getRequest();
+		Optional<RequestStatus> status = queryService.getRequestStatusIdByName("Pendiente");
+		request.setStatus(status.get().getId());
+		queryService.updateRequest(request);
+		
+		return request.getId();
+	}
 	
 
 	

@@ -37,8 +37,10 @@ public class FaceComparisonServiceImpl implements FaceComparisonService {
 		Image referenceImage = new Image().withS3Object(new com.amazonaws.services.rekognition.model.S3Object()
                 .withBucket(bucketName).withName(referenceImageName));
 
+		System.out.println("Comparando imagenes");
         List<String> imageNamesToCompare = s3ImageService.listImageNamesInBucket(bucketName, referenceImageName);    
-        for (String imageName : imageNamesToCompare) {        	
+        for (String imageName : imageNamesToCompare) {
+        	System.out.println(imageName);
             Image imageToCompare = new Image().withS3Object(new com.amazonaws.services.rekognition.model.S3Object()
                     .withBucket(bucketName).withName(imageName));
             CompareFacesRequest request = new CompareFacesRequest()

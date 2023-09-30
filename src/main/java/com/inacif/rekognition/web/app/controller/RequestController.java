@@ -3,6 +3,7 @@ package com.inacif.rekognition.web.app.controller;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,13 +16,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inacif.rekognition.web.app.Constants;
+import com.inacif.rekognition.web.app.Utils;
+import com.inacif.rekognition.web.app.entity.ConfirmationCode;
 import com.inacif.rekognition.web.app.entity.Request;
 import com.inacif.rekognition.web.app.entity.RequestStatus;
 import com.inacif.rekognition.web.app.maps.RequestDetail;
 import com.inacif.rekognition.web.app.projection.Requests;
+import com.inacif.rekognition.web.app.responses.Response;
+import com.inacif.rekognition.web.app.service.EmailService;
 import com.inacif.rekognition.web.app.service.QueryService;
 import com.inacif.rekognition.web.app.service.RequestService;
-import com.inacif.rekognition.web.app.responses.Response;
 
 @RestController
 @RequestMapping("/request")
@@ -33,13 +38,32 @@ public class RequestController {
 	@Autowired
 	private RequestService requestService;
 	
+	@Autowired
+	private EmailService emailService;
+	
 	@PostMapping
 	public ResponseEntity<?> create(@RequestBody Request requestEntity) {
+		
 		Optional<RequestStatus> requestStatus = queryService.getRequestStatusIdByName("Ingresada");
 		requestEntity.setStatus(requestStatus.get().getId());
 		Request request = queryService.saveRequest(requestEntity);
+		
+		ConfirmationCode confirmationCodeEntity = new ConfirmationCode();
+		confirmationCodeEntity.setChannel("email");
+		String code = UUID.randomUUID().toString();
+		confirmationCodeEntity.setCode(code);
+		confirmationCodeEntity.setExpirationTimestamp(Utils.getExpirationTimeZone(7).toString());
+		confirmationCodeEntity.setRequest(request);
+		queryService.saveConfirmationCode(confirmationCodeEntity);
+		
+		String url = Constants.domain + "/email/confirmed?code=" + code;
+		String body = Constants.emailConfirmationTemplate;
+		body = body.replace("{applicantName}", request.getApplicantNames() + " " + request.getApplicantLastNames());
+		body = body.replace("{confirmationUrl}", url);
+		emailService.sendEmail(request.getApplicantEmail(), "Solicitud por desaparición de personas", body);
+		
 		Response response = new Response(HttpStatus.OK, "Solicitud cargada correctamente");
-		response.setData(request);
+		//response.setData(request);
 		return response.message();
 	}
 	
@@ -99,6 +123,14 @@ public class RequestController {
 		return response.message();
 	}
 	
+	@PutMapping("/emailConfirmation")
+	public ResponseEntity<?> requestEmailConfirmation(@RequestParam(value = "code") String uuid){
+		Long requestNumber = requestService.emailConfirmation(uuid);
+		if(requestNumber == null) {
+			return new Response(HttpStatus.OK, "Solicitud no encontrada").message();
+		}
+		return new Response(HttpStatus.OK, "Correo confirmado", requestNumber).message();
+	}
 	/*@GetMapping("/status")
 	public ResponseEntity<?> getRequestsByStatus(@RequestParam(value = "statusName") String statusName){
 		

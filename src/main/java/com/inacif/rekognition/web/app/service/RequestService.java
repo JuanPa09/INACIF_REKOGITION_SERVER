@@ -18,4 +18,6 @@ public interface RequestService {
 	
 	public Request updateRequestStatus(Request request, String status);
 	
+	public Long emailConfirmation(String code);
+	
 }

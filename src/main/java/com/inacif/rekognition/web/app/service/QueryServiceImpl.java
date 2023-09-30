@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.inacif.rekognition.web.app.entity.CaseInfo;
+import com.inacif.rekognition.web.app.entity.ConfirmationCode;
 import com.inacif.rekognition.web.app.entity.Functionality;
 import com.inacif.rekognition.web.app.entity.Request;
 import com.inacif.rekognition.web.app.entity.RequestStatus;
@@ -22,6 +23,7 @@ import com.inacif.rekognition.web.app.projection.RequestCitizenDetail;
 import com.inacif.rekognition.web.app.projection.Requests;
 import com.inacif.rekognition.web.app.projection.RolesFunctionalities;
 import com.inacif.rekognition.web.app.repository.CaseRepository;
+import com.inacif.rekognition.web.app.repository.ConfirmationCodeRepository;
 import com.inacif.rekognition.web.app.repository.FunctionalityRepository;
 import com.inacif.rekognition.web.app.repository.MenuRepository;
 import com.inacif.rekognition.web.app.repository.RequestRepository;
@@ -47,8 +49,8 @@ public class QueryServiceImpl implements QueryService {
 	private final FunctionalityRepository functionalityRepository;
 	private final RoleFunctionalityRepository roleFunctionalityRepository;
 	private final UserRepository userRepository;
+	private final ConfirmationCodeRepository confirmationCodeRepository;
 
-	@Autowired
 	public QueryServiceImpl(
 			CaseRepository caseRepository, 
 			RequestStatusRepository requestStatusRepository,
@@ -59,7 +61,8 @@ public class QueryServiceImpl implements QueryService {
 			MenuRepository menuRepository,
 			FunctionalityRepository functionalityRepository,
 			RoleFunctionalityRepository roleFunctionalityRepository,
-			UserRepository userRepository) {
+			UserRepository userRepository,
+			ConfirmationCodeRepository confirmationCodeRepository) {
 		
 		this.caseRepository = caseRepository;
 		this.requestStatusRepository = requestStatusRepository;
@@ -71,6 +74,7 @@ public class QueryServiceImpl implements QueryService {
 		this.functionalityRepository = functionalityRepository;
 		this.roleFunctionalityRepository = roleFunctionalityRepository;
 		this.userRepository = userRepository;
+		this.confirmationCodeRepository = confirmationCodeRepository;
 	}
 	
 	@Override
@@ -205,5 +209,15 @@ public class QueryServiceImpl implements QueryService {
 	public List<User> getUserByUsernameAndPassword(String username, String password) {
 		return this.userRepository.findByUsernameAndPassword(username, password);
 	}
+	
+	@Override
+	public Optional<ConfirmationCode> getConfirmationCodeByCode(String code) {
+		return this.confirmationCodeRepository.findByCode(code);
+	}
+	
+	public ConfirmationCode saveConfirmationCode(ConfirmationCode confirmationCode) {
+		return this.confirmationCodeRepository.save(confirmationCode);
+	}
+	
 	
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.inacif.rekognition.web.app.entity.CaseInfo;
+import com.inacif.rekognition.web.app.entity.ConfirmationCode;
 import com.inacif.rekognition.web.app.entity.Functionality;
 import com.inacif.rekognition.web.app.entity.Request;
 import com.inacif.rekognition.web.app.entity.RequestStatus;
@@ -21,9 +22,16 @@ import com.inacif.rekognition.web.app.projection.RolesFunctionalities;
 
 public interface QueryService {
 	
+	// CASE
+	
 	public List<CaseInfo> getCasesInfoByImagesNames(List<String> imagesNames);
 	
+	// CASE
+	
 	public Optional<RequestStatus> getRequestStatusIdByName(String name);
+	
+	
+	// REQUEST
 	
 	public Optional<List<Requests>> getRequestsByStatus(Integer status);
 	
@@ -43,9 +51,13 @@ public interface QueryService {
 	
 	public Optional<RequestStatus> getRequestStatusById(Long id);
 	
+	// SETTINGS
+	
 	public List<Settings> getSettings();
 	
 	public Settings saveSettings(Settings settings);
+	
+	// STATUS
 	
 	public Optional<Status> getStatusByName(String name);
 	
@@ -77,5 +89,9 @@ public interface QueryService {
 	
 	public List<User> getUserByUsernameAndPassword(String username, String password);
 	
+	// CONFIRMATION CODE
+	public Optional<ConfirmationCode> getConfirmationCodeByCode(String code);
+	
+	public ConfirmationCode saveConfirmationCode(ConfirmationCode confirmationCode);
 	
 }
