@@ -33,7 +33,7 @@ public class Constants {
 			+ "<body style=\"font-family: Arial, sans-serif; text-align: center;\">\r\n"
 			+ "    <img src=\"https://www.inacif.gob.gt/uipconsulta/img/logo_inacifgt.png\" alt=\"Logo de la Empresa\" width=\"200\">\r\n"
 			+ "    <h1>Solicitud de Búsqueda de Persona Desaparecida</h1>\r\n"
-			+ "    <p>Estimado {applicantName},</p>\r\n"
+			+ "    <p>Estimado(a) {applicantName},</p>\r\n"
 			+ "    <p>Gracias por contactarnos para solicitar la búsqueda de una persona desaparecida. Estamos comprometidos en ayudarte en este momento difícil.</p>\r\n"
 			+ "    <p>Para procesar tu solicitud, por favor haz clic en el siguiente enlace:</p>\r\n"
 			+ "    <a href=\"{confirmationUrl}\" style=\"text-decoration: none; background-color: #007BFF; color: white; padding: 10px 20px; border-radius: 5px;\">Procesar Solicitud</a>\r\n"

@@ -1,6 +1,7 @@
 package com.inacif.rekognition.web.app.entity;
 
 import java.sql.Date;
+import java.util.Optional;
 
 import com.inacif.rekognition.web.app.persistance.RequestEntityListener;
 
@@ -70,6 +71,12 @@ public class Request {
     @ManyToOne
     @JoinColumn(name = "caseId")
     private CaseInfo caseId;
+    
+    String status;
+    
+    public Optional<String> getStatus() {
+        return Optional.ofNullable(status);
+    }
     
     public Long getId() {
 		return id;
@@ -318,6 +325,5 @@ public class Request {
 	public void setCreatedDate(String createdDate) {
 		this.createdDate = createdDate;
 	}
-
 	
 }

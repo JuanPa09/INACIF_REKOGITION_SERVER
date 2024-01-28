@@ -26,6 +26,7 @@ public class CaseInfo {
     private String image;
     private String additionalDescription;
     private String surveyDate;
+    private String createdDate;
 
     
     // Getters and setters for each field
@@ -131,5 +132,13 @@ public class CaseInfo {
 
 	public void setSurveyDate(String surveyDate) {
 		this.surveyDate = surveyDate;
+	}
+
+	public String getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(String createdDate) {
+		this.createdDate = createdDate;
 	}
 }
