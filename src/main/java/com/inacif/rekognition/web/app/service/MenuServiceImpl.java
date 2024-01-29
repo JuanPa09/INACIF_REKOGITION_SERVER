@@ -17,7 +17,7 @@ public class MenuServiceImpl implements MenuService {
 	QueryService queryService;
 	
 	@Override 
-	public Object MapMenu(Integer roleId) {
+	public Object MapMenu(String roleId) {
 		List<SPMenu> menu = queryService.callSp_getMenuByRole(roleId);
 		if(menu.isEmpty()) {
 			return null;

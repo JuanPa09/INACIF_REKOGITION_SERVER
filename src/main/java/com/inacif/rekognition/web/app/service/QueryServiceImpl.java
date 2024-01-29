@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inacif.rekognition.web.app.Utils;
 import com.inacif.rekognition.web.app.entity.CaseInfo;
 import com.inacif.rekognition.web.app.entity.ConfirmationCode;
 import com.inacif.rekognition.web.app.entity.Functionality;
@@ -14,10 +15,13 @@ import com.inacif.rekognition.web.app.entity.Request;
 import com.inacif.rekognition.web.app.entity.RequestStatus;
 import com.inacif.rekognition.web.app.entity.Role;
 import com.inacif.rekognition.web.app.entity.RoleFunctionality;
+import com.inacif.rekognition.web.app.entity.RoleFunctionalityId;
 import com.inacif.rekognition.web.app.entity.SPMenu;
 import com.inacif.rekognition.web.app.entity.Settings;
 import com.inacif.rekognition.web.app.entity.Status;
 import com.inacif.rekognition.web.app.entity.User;
+import com.inacif.rekognition.web.app.maps.FunctionalitiesStatus;
+import com.inacif.rekognition.web.app.maps.UpdateRoleFunctionality;
 import com.inacif.rekognition.web.app.projection.RequestApplicantDetail;
 import com.inacif.rekognition.web.app.projection.RequestCitizenDetail;
 import com.inacif.rekognition.web.app.projection.Requests;
@@ -111,6 +115,7 @@ public class QueryServiceImpl implements QueryService {
 
 	@Override
 	public Optional<Request> getRequestById(Long id) {
+		System.out.println("Si es esto");
 		return requestRepository.findById(id);
 	}
 
@@ -161,12 +166,13 @@ public class QueryServiceImpl implements QueryService {
 
 	@Override
 	public Optional<Role> getRoleById(Long id) {
+		System.out.println(roleRepository.findById(id));
 		return roleRepository.findById(id);
 	}
 
 	@Override
 	@Transactional
-	public List<SPMenu> callSp_getMenuByRole(Integer param) {
+	public List<SPMenu> callSp_getMenuByRole(String param) {
 		return menuRepository.callMenuProcedure(param);
 	}
 
@@ -217,6 +223,43 @@ public class QueryServiceImpl implements QueryService {
 	
 	public ConfirmationCode saveConfirmationCode(ConfirmationCode confirmationCode) {
 		return this.confirmationCodeRepository.save(confirmationCode);
+	}
+
+	@Override
+	public void updateRoleFunctionality(UpdateRoleFunctionality functionalitiesInfo) {
+		Long roleId = functionalitiesInfo.getRoleId();
+		List<FunctionalitiesStatus> funcStatus = functionalitiesInfo.getFunctionalitiesStatus();
+		for(FunctionalitiesStatus functionalityStatus :funcStatus) {
+			RoleFunctionalityId embeddedKey = new RoleFunctionalityId( roleId, functionalityStatus.getFunctionalityId());
+			if(functionalityStatus.getStatus() == false) {
+				roleFunctionalityRepository.deleteById(
+						embeddedKey
+						);
+			} else {
+				RoleFunctionality roleFunctionality = new RoleFunctionality();
+	            roleFunctionality.setId(embeddedKey);
+	            roleFunctionality.setCreationDate(Utils.getTimeZone());
+	            roleFunctionality.setUserModifies("Administrador");
+
+	            roleFunctionalityRepository.save(roleFunctionality);
+			}
+		}
+		
+	}
+
+	@Override
+	public void deleteRoleById(Long id) {
+		roleRepository.deleteById(id);		
+	}
+
+	@Override
+	public Optional<Role> getRoleByName(String name) {
+		return roleRepository.getRoleByName(name);
+	}
+	
+	@Override
+	public Optional<List<Long>> getRoleIdsByNames(List<String> listNames){
+		return roleRepository.getRoleIdsByName(listNames);
 	}
 	
 	

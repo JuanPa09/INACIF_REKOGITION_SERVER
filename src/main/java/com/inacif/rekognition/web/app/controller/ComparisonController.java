@@ -47,7 +47,7 @@ public class ComparisonController {
 		
 		System.out.println("Obteniendo solicitud..");
 		Optional<Request> optionalRequest = queryService.getRequestById(requestId);
-		
+		System.out.println("Se obtuvo la solicitud");
 		if(optionalRequest.isEmpty()) {
 			Response response = new Response(HttpStatus.NOT_FOUND, "No se encontró la solicitud");
 			return response.message();
@@ -56,7 +56,11 @@ public class ComparisonController {
 		Request currentRequest = optionalRequest.get();
 		
 		System.out.println("Obteniendo resultados de rekognition");
+		long startTime = System.currentTimeMillis();
 		Rekognition results = faceComparisonService.compare(Constants.bucketName, currentRequest.getImage());
+		long endTime = System.currentTimeMillis();
+        long elapsedTime = endTime - startTime;
+        System.out.println("Tiempo de ejecución: " + elapsedTime + " milisegundos");
 		
 		if(Utils.isEmpty(results.getData())) {
 			Response response = new Response(HttpStatus.NOT_FOUND, "No se encontraron coincidencias");

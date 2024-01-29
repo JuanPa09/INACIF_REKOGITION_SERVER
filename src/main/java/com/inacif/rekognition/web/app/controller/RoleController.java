@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -37,15 +38,29 @@ public class RoleController {
 	
 	
 	@GetMapping
-	public ResponseEntity<?> getRoles(@RequestParam(value = "roleId", required = false) Long roleId){
+	public ResponseEntity<?> getRoles(@RequestParam(value = "roleId", required = false ) Long roleId,
+									@RequestParam(value = "roleName", required = false ) List<String> roleName){
 		
+		List<FunctionalityRoleResultResponse> requestResponse = new ArrayList<>();
 		if(roleId != null) {
 			Optional<Role> optionalRole = queryService.getRoleById(roleId);
 			if(optionalRole.isEmpty()) {
 				return new Response(HttpStatus.NOT_FOUND, "Rol no encontrado").message();
 			}
-			Response response = new Response(HttpStatus.OK, "Rol Encontrado");
-			response.setData(optionalRole.get());
+			List<RolesFunctionalities> functionalities = queryService.getFunctionalitiesByRoleId(roleId);
+			requestResponse.add(new FunctionalityRoleResultResponse(optionalRole.get(), functionalities));
+			Response response = new Response(HttpStatus.OK, "Rol Encontrado", requestResponse.get(0));
+			// response.setData(optionalRole.get());
+			return response.message();
+		}
+		
+		if(roleName != null) {
+			Optional<List<Long>> optionalRole = queryService.getRoleIdsByNames(roleName);
+			if(optionalRole.isEmpty()) {
+				return new Response(HttpStatus.NOT_FOUND, "Rol no encontrado").message();
+			}
+			Response response = new Response(HttpStatus.OK, "Rol Encontrado", optionalRole.get());
+			// response.setData(optionalRole.get());
 			return response.message();
 		}
 		
@@ -53,8 +68,6 @@ public class RoleController {
 		if(roles.isEmpty()) {
 			return new Response(HttpStatus.NOT_FOUND, "No existen roles").message();
 		}
-		
-		List<FunctionalityRoleResultResponse> requestResponse = new ArrayList<>();
 		for(Role role: roles) {
 			List<RolesFunctionalities> functionalities = queryService.getFunctionalitiesByRoleId(role.getId());
 			requestResponse.add(new FunctionalityRoleResultResponse(role, functionalities));
@@ -92,12 +105,19 @@ public class RoleController {
 	}
 	
 	@GetMapping("/menu")
-	public ResponseEntity<?> getRoleMenu(@RequestParam(value="roleId") Integer roleId){
+	public ResponseEntity<?> getRoleMenu(@RequestParam(value="roleId") String roleId){
 		Object menu = menuService.MapMenu(roleId);
 		if(menu == null ) {
 			return new Response(HttpStatus.NOT_FOUND, "No se pudo encontrar el rol").message();
 		}
 		return new Response(HttpStatus.OK, "Menu encontrado exitosamente", menu).message();
+	}
+	
+	@DeleteMapping
+	public ResponseEntity<?> deleteRoleById(@RequestParam(value = "roleId", required = true) Long roleId){
+		
+		queryService.deleteRoleById(roleId);
+		return new Response(HttpStatus.OK, "Rol Eliminado correctamennte").message();
 	}
 	
 }

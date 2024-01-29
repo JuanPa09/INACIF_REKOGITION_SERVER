@@ -2,14 +2,22 @@ package com.inacif.rekognition.web.app.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Id;
 
 @Embeddable
 public class RoleFunctionalityId {
+	
+	public RoleFunctionalityId() {
+		
+	}
+	
+	public RoleFunctionalityId(Long roleId, Long functionalityId) {
+		this.roleId = roleId;
+		this.functionalityId = functionalityId;
+	}
 
-	@Column(name = "role_id")
     private Long roleId;
 
-    @Column(name = "functionality_id")
     private Long functionalityId;
 
 	public Long getRolId() {

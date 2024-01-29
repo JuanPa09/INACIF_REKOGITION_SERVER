@@ -14,6 +14,8 @@ import com.inacif.rekognition.web.app.entity.SPMenu;
 import com.inacif.rekognition.web.app.entity.Settings;
 import com.inacif.rekognition.web.app.entity.Status;
 import com.inacif.rekognition.web.app.entity.User;
+import com.inacif.rekognition.web.app.maps.FunctionalitiesStatus;
+import com.inacif.rekognition.web.app.maps.UpdateRoleFunctionality;
 import com.inacif.rekognition.web.app.projection.RequestApplicantDetail;
 import com.inacif.rekognition.web.app.projection.RequestCitizenDetail;
 import com.inacif.rekognition.web.app.projection.Requests;
@@ -68,8 +70,14 @@ public interface QueryService {
 	
 	public Optional<Role> getRoleById(Long id);
 	
+	public Optional<Role> getRoleByName(String name);
+	
+	public Optional<List<Long>> getRoleIdsByNames(List<String> listNames);
+	
+	public void deleteRoleById(Long id);
+	
 	// MENU
-	public List<SPMenu> callSp_getMenuByRole(Integer param);
+	public List<SPMenu> callSp_getMenuByRole(String param);
 	
 	// FUNCTIONALITY
 	RoleFunctionality saveRoleFunctionality(RoleFunctionality functionality);
@@ -79,6 +87,9 @@ public interface QueryService {
 	public List<RoleFunctionality> getRoleFunctionalityByRoleId(Long id);
 	
 	public List<RolesFunctionalities> getFunctionalitiesByRoleId(Long id);
+	
+	// ROLE FUNCTIONALITY
+	public void updateRoleFunctionality(UpdateRoleFunctionality functionalitiesStatus);
 	
 	// USER
 	public User saveUser(User user);
