@@ -72,13 +72,13 @@ public class FaceComparisonServiceImpl implements FaceComparisonService {
         return rekognitionResult;
 	}*/
     
-    public Rekognition compare(String bucketName, String referenceImageName) {
+    public Rekognition compare(String bucketName, String referenceImageName, float similarity) {
         Rekognition rekognitionResult = new Rekognition();
         Image referenceImage = new Image().withS3Object(new com.amazonaws.services.rekognition.model.S3Object()
                 .withBucket(bucketName).withName(referenceImageName));
 
         System.out.println("Comparing images");
-        List<String> imageNamesToCompare = s3ImageService.listImageNamesInBucket(bucketName, referenceImageName);
+        List<String> imageNamesToCompare = s3ImageService.listImageNamesInBucket(bucketName, "Case");
 
         List<CompareFacesRequest> compareFacesRequests = new ArrayList<>();
 
@@ -107,7 +107,7 @@ public class FaceComparisonServiceImpl implements FaceComparisonService {
             String imageName = imageNamesToCompare.get(i);
 
             for (CompareFacesMatch match : result.getFaceMatches()) {
-                if (match.getSimilarity() > 80.0f) {
+                if (match.getSimilarity() > similarity) {
                     RekognitionInfo imageInfo = new RekognitionInfo();
                     imageInfo.setImageName(imageName);
                     imageInfo.setSimilarity(match.getSimilarity());

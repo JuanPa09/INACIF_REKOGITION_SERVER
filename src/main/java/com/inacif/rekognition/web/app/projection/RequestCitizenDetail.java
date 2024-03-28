@@ -1,6 +1,6 @@
 package com.inacif.rekognition.web.app.projection;
 
-import java.sql.Date;
+
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -26,7 +26,7 @@ public interface RequestCitizenDetail {
     
 	@JsonProperty("Fecha de nacimiento")
     @Temporal(TemporalType.DATE)
-    Date getDisappearedBirthdate();
+    String getDisappearedBirthdate();
     
 	@JsonProperty("Altura cm")
     int getDisappearedHeight();

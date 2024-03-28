@@ -37,7 +37,7 @@ public class Request {
     private String applicantIdentificationType;
     private String applicantIdentificationNumber;
     @Temporal(TemporalType.DATE)
-    private Date applicantBirthdate;
+    private String applicantBirthdate;
     
     private String applicantNames;
     private String applicantLastNames;
@@ -51,7 +51,7 @@ public class Request {
     private String disappearedSecondLastName;
     
     @Temporal(TemporalType.DATE)
-    private Date disappearedBirthdate;
+    private String disappearedBirthdate;
     
     private int disappearedHeight;
     private String disappearedMunicipality;
@@ -128,11 +128,11 @@ public class Request {
 		this.applicantIdentificationNumber = applicantIdentificationNumber;
 	}
 
-	public Date getApplicantBirthdate() {
+	public String getApplicantBirthdate() {
 		return applicantBirthdate;
 	}
 
-	public void setApplicantBirthdate(Date applicantBirthdate) {
+	public void setApplicantBirthdate(String applicantBirthdate) {
 		this.applicantBirthdate = applicantBirthdate;
 	}
 
@@ -216,11 +216,11 @@ public class Request {
 		this.disappearedSecondLastName = disappearedSecondLastName;
 	}
 
-	public Date getDisappearedBirthdate() {
+	public String getDisappearedBirthdate() {
 		return disappearedBirthdate;
 	}
 
-	public void setDisappearedBirthdate(Date disappearedBirthdate) {
+	public void setDisappearedBirthdate(String disappearedBirthdate) {
 		this.disappearedBirthdate = disappearedBirthdate;
 	}
 

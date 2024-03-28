@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inacif.rekognition.web.app.Constants;
 import com.inacif.rekognition.web.app.entity.CaseInfo;
 import com.inacif.rekognition.web.app.responses.Response;
 import com.inacif.rekognition.web.app.service.CaseService;
+import com.inacif.rekognition.web.app.service.EmailService;
 
 
 
@@ -29,6 +31,9 @@ public class CaseController {
 	
 	@Autowired
 	private CaseService caseService;
+	
+	@Autowired
+	private EmailService emailService;
 	
 	
 	@PostMapping
@@ -58,5 +63,15 @@ public class CaseController {
         Response response = new Response(HttpStatus.OK,"Caso actualizado correctamente");
         return response.message();
     }
+	
+	@GetMapping("/mail")
+	public void mail() {
+		String body = Constants.requestConfirmationTemplateString;
+		body = body.replace(":requestId", "100022");
+		body = body.replace(":applicant", "Karina");
+		body = body.replace(":address", "14 calle 7-05");
+		body = body.replace(":phone", "30237820");
+		emailService.sendEmail("juanpa.a.l10@gmail.com", "Prueba", body);
+	}
 
 }

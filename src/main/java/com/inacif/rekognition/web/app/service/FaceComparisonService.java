@@ -5,6 +5,6 @@ import com.inacif.rekognition.web.app.entity.Rekognition;
 
 public interface FaceComparisonService {
 	
-	public Rekognition compare(String bucketName, String referenceImageName);
+	public Rekognition compare(String bucketName, String referenceImageName, float similarity);
 
 }

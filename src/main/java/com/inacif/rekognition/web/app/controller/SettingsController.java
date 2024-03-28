@@ -1,9 +1,12 @@
 package com.inacif.rekognition.web.app.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +28,15 @@ public class SettingsController {
 		Response response = new Response(HttpStatus.OK, "Ajustes guardados correctamente");
 		response.setData(settings);
 		return response.message();
+	}
+	
+	@GetMapping
+	public ResponseEntity<?> get(){
+		List<Settings> settings = queryService.getSettings();
+		if(settings.isEmpty()) {
+			return new Response(HttpStatus.NOT_FOUND, "No se encontraton configuraciones").message();
+		}
+		return new Response(HttpStatus.OK, "Ajustes encontrados", settings).message();
 	}
 	
 }

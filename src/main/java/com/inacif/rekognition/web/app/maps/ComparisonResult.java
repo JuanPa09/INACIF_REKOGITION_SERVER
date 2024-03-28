@@ -25,8 +25,8 @@ public class ComparisonResult {
 	@JsonProperty("Altura")
 	private Integer height;
 	
-	@JsonProperty("Complexión")
-	private Integer complexion;
+//	@JsonProperty("Complexión")
+//	private Integer complexion;
 	
 	@JsonProperty("Sexo")
 	private Integer sex;
@@ -77,12 +77,12 @@ public class ComparisonResult {
 	public void setHeight(Integer height) {
 		this.height = height;
 	}
-	public Integer getComplexion() {
-		return complexion;
-	}
-	public void setComplexion(Integer complexion) {
-		this.complexion = complexion;
-	}
+//	public Integer getComplexion() {
+//		return complexion;
+//	}
+//	public void setComplexion(Integer complexion) {
+//		this.complexion = complexion;
+//	}
 	public Integer getSex() {
 		return sex;
 	}

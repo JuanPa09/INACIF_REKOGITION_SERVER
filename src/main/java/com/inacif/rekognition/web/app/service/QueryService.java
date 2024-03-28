@@ -14,7 +14,6 @@ import com.inacif.rekognition.web.app.entity.SPMenu;
 import com.inacif.rekognition.web.app.entity.Settings;
 import com.inacif.rekognition.web.app.entity.Status;
 import com.inacif.rekognition.web.app.entity.User;
-import com.inacif.rekognition.web.app.maps.FunctionalitiesStatus;
 import com.inacif.rekognition.web.app.maps.UpdateRoleFunctionality;
 import com.inacif.rekognition.web.app.projection.RequestApplicantDetail;
 import com.inacif.rekognition.web.app.projection.RequestCitizenDetail;

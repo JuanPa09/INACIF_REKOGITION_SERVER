@@ -70,12 +70,14 @@ public class RequestController {
 	@GetMapping("/detail")
 	public ResponseEntity<?> getDetail(@RequestParam(value = "requestId") Long requestId){
 		
+		System.out.println("Intentando");
 		RequestDetail requestDetail = requestService.getRequestDetail(requestId);
 		if(requestDetail== null) {
 			Response response = new Response(HttpStatus.NOT_FOUND, "Solicitud no encontrada");
 			return response.message();
 		}
 		
+		System.out.println(requestDetail);
 		Response response = new Response(HttpStatus.OK, "Solicitud encontrada");
 		response.setData(requestDetail);
 		return response.message();
@@ -163,6 +165,12 @@ public class RequestController {
 		}
 		Request currentRequest = request.get();
 		requestService.updateRequestStatus(currentRequest, "Confirmada");
+		String body = Constants.requestConfirmationTemplateString;
+		body = body.replace(":requestId", currentRequest.getId().toString());
+		body = body.replace(":applicant", currentRequest.getApplicantNames());
+		body = body.replace(":address", "14 calle 5-49 zona 1, Guatemala");
+		body = body.replace(":phone", "(502)-23273100");
+		emailService.sendEmail(currentRequest.getApplicantEmail(), "Resultados solicitud por desaparición de personas", body);
 		return new Response(HttpStatus.OK, "Solicitud confirmada con éxito").message();
 	}
 	

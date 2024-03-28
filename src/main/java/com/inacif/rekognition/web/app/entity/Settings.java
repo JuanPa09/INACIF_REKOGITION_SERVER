@@ -24,6 +24,30 @@ public class Settings {
 	private Integer sex;
 	private Integer maxRequests;
 	
+	public Settings() {
+		
+	}
+	
+	public Settings(
+			int eyes, 
+			int hair, 
+			int skin, 
+			int feet,
+			int height,
+			int complexion,
+			int image,
+			int sex) {
+		
+		this.eyes = eyes;
+		this.hair = hair;
+		this.skin = skin;
+		this.feet = feet;
+		this.height = height;
+		this.complexion = complexion;
+		this.image = image;
+		this.sex = sex;
+	}
+	
 	
 	public Long getId() {
 		return id;

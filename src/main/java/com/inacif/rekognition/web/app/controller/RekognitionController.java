@@ -22,7 +22,7 @@ public class RekognitionController {
 		
 	@GetMapping("/compare")
 	public ResponseEntity<?> compare(@RequestParam(value="name") String imageName) {
-		Rekognition results = faceComparisonService.compare(Constants.bucketName, imageName);
+		Rekognition results = faceComparisonService.compare(Constants.bucketName, imageName, 0);
 		return ResponseEntity.status(HttpStatus.CREATED).body(results);
 	} 
 

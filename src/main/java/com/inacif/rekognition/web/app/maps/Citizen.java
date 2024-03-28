@@ -3,6 +3,7 @@ package com.inacif.rekognition.web.app.maps;
 import java.sql.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.inacif.rekognition.web.app.Utils;
 import com.inacif.rekognition.web.app.entity.Request;
 
 import jakarta.persistence.Temporal;
@@ -44,10 +45,9 @@ public class Citizen {
     private String disappearedSecondLastName;
     
 	@JsonProperty("Fecha de nacimiento")
-    @Temporal(TemporalType.DATE)
-    private Date disappearedBirthdate;
+    private String disappearedBirthdate;
     
-	@JsonProperty("Altura cm")
+	@JsonProperty("Altura (cm)")
     private int disappearedHeight;
 	
 	@JsonProperty("Municipio")
@@ -115,11 +115,11 @@ public class Citizen {
 		this.disappearedSecondLastName = disappearedSecondLastName;
 	}
 
-	public Date getDisappearedBirthdate() {
-		return disappearedBirthdate;
+	public String getDisappearedBirthdate() {
+		return Utils.getDateWithFormat(disappearedBirthdate);
 	}
 
-	public void setDisappearedBirthdate(Date disappearedBirthdate) {
+	public void setDisappearedBirthdate(String disappearedBirthdate) {
 		this.disappearedBirthdate = disappearedBirthdate;
 	}
 

@@ -19,6 +19,7 @@ import com.inacif.rekognition.web.app.entity.Rekognition;
 import com.inacif.rekognition.web.app.entity.RekognitionInfo;
 import com.inacif.rekognition.web.app.entity.Request;
 import com.inacif.rekognition.web.app.entity.RequestStatus;
+import com.inacif.rekognition.web.app.entity.Settings;
 import com.inacif.rekognition.web.app.maps.ComparisonResponse;
 import com.inacif.rekognition.web.app.maps.ComparisonResult;
 import com.inacif.rekognition.web.app.maps.ImagesUrl;
@@ -47,26 +48,29 @@ public class ComparisonController {
 		
 		System.out.println("Obteniendo solicitud..");
 		Optional<Request> optionalRequest = queryService.getRequestById(requestId);
-		System.out.println("Se obtuvo la solicitud");
 		if(optionalRequest.isEmpty()) {
 			Response response = new Response(HttpStatus.NOT_FOUND, "No se encontró la solicitud");
 			return response.message();
 		}
-		
 		Request currentRequest = optionalRequest.get();
+		
+		System.out.println("Obteniendo configuraciones");
+		Settings settings = Utils.getDefaultSettings();
+		List<Settings> settingsList = queryService.getSettings();
+		if(!settingsList.isEmpty()) {
+			settings = settingsList.get(0);
+		}
 		
 		System.out.println("Obteniendo resultados de rekognition");
 		long startTime = System.currentTimeMillis();
-		Rekognition results = faceComparisonService.compare(Constants.bucketName, currentRequest.getImage());
+		Rekognition results = faceComparisonService.compare(Constants.bucketName, currentRequest.getImage(), settings.getImage());
 		long endTime = System.currentTimeMillis();
         long elapsedTime = endTime - startTime;
         System.out.println("Tiempo de ejecución: " + elapsedTime + " milisegundos");
-		
 		if(Utils.isEmpty(results.getData())) {
 			Response response = new Response(HttpStatus.NOT_FOUND, "No se encontraron coincidencias");
 			return response.message();
 		}
-		
 		List<String> imagesNames = new ArrayList<>(); ;
 		for(RekognitionInfo comparisonResult : results.getData()) {
 			imagesNames.add(comparisonResult.getImageName());
@@ -75,7 +79,6 @@ public class ComparisonController {
 		System.out.println("Obteniendo datos de los casos");
 		System.out.println(imagesNames);
 		List<CaseInfo> casesInfoResults = queryService.getCasesInfoByImagesNames(imagesNames);
-		
 		if(Utils.isEmpty(casesInfoResults) || casesInfoResults.isEmpty()) {
 			Response response = new Response(HttpStatus.NOT_FOUND, "No se encontraron casos relacionados");
 			return response.message();
@@ -83,6 +86,7 @@ public class ComparisonController {
 		
 		System.out.println("Obteniendo el caso solicitado");
 		CaseInfo currentCase = null;
+		List<CaseInfo> filteredCases = new ArrayList<>();;
 		if(caseId!=null) {
 			for (CaseInfo caseInfo: casesInfoResults){
 				if(caseInfo.getId().toString().equals(caseId.toString())) {
@@ -95,12 +99,29 @@ public class ComparisonController {
 				return response.message();
 			}
 		}else {
-			currentCase = casesInfoResults.get(0);
+			
+			//Filtering cases with filter settings
+			for(CaseInfo caseInfo: casesInfoResults) {
+				if(dataProcessorService.isOnFilters(settings, dataProcessorService.getComparisonPercentages(currentRequest, caseInfo))) {
+					filteredCases.add(caseInfo);
+				}
+			}
+			
+			if(filteredCases.isEmpty()) {
+				Response response = new Response(HttpStatus.NOT_FOUND, "Casos no cumplen con filtros");
+				return response.message();
+			}
+			currentCase = filteredCases.get(0);
+		}
+		
+		List<CaseInfo> casesList = casesInfoResults;
+		if(!filteredCases.isEmpty()) {
+			casesList = filteredCases;
 		}
 		
 		// Filtering list with the other results
 		List<OtherComparisonResult> otherResults = new ArrayList<>();
-		for(CaseInfo caseInfo: casesInfoResults) {
+		for(CaseInfo caseInfo: casesList) {
 			if(caseInfo.getId() != currentCase.getId()) {
 				otherResults.add(new OtherComparisonResult(caseInfo));
 			}
@@ -109,12 +130,16 @@ public class ComparisonController {
 		System.out.println("Obteniendo porcentajes de comparación");
 		ComparisonResult comparisonResult = dataProcessorService.getComparisonPercentages(currentRequest, currentCase);
 		for(RekognitionInfo cprsts : results.getData()) {
-			if(cprsts.getImageName() == casesInfoResults.get(0).getImage()) {
+			if(cprsts.getImageName().equals(currentCase.getImage())) {
 				comparisonResult.setImage(cprsts.getSimilarity());
 				break;
 			}
 		};
-		comparisonResult.setImage(results.getData().get(0).getSimilarity());
+		//comparisonResult.setImage(results.getData().get(0).getSimilarity());
+		
+		
+		
+		
 		
 		System.out.println("Obteniendo url firmada de s3");
 		ImagesUrl imagesUrl = new ImagesUrl(s3ImageService.getSignedUrl(currentRequest.getImage()), s3ImageService.getSignedUrl(currentCase.getImage()));
